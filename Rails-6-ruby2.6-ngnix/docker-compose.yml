@@ -1,0 +1,27 @@
+version: "3"
+services:
+  web:
+    image: nginx
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+    ports:
+      - 80:80
+  db:
+    image: postgres:11.1-alpine
+    ports:
+      - 5432
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - RAILS_ENV=${RAILS_ENV}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
